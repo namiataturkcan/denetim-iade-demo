@@ -43,7 +43,77 @@ def sifre_kontrolu():
 
 
 sifre_kontrolu()
+# =========================================================
+# GÖRSEL DÜZENLEME
+# =========================================================
+st.markdown(
+    """
+    <style>
+    .main {
+        background-color: #f7f8fa;
+    }
 
+    h1 {
+        color: #1f2937;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    h2, h3 {
+        color: #111827;
+        font-weight: 650;
+    }
+
+    .stAlert {
+        border-radius: 12px;
+    }
+
+    div[data-testid="stExpander"] {
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        background-color: #ffffff;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    div[data-testid="stExpander"] summary {
+        font-weight: 650;
+        color: #1f2937;
+    }
+
+    .stButton > button {
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        background-color: #ffffff;
+        color: #1f2937;
+        font-weight: 600;
+        padding: 0.45rem 0.8rem;
+    }
+
+    .stButton > button:hover {
+        border-color: #64748b;
+        background-color: #f1f5f9;
+        color: #0f172a;
+    }
+
+    textarea {
+        border-radius: 10px !important;
+    }
+
+    div[data-testid="stForm"] {
+        border-radius: 12px;
+        background-color: #ffffff;
+    }
+
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # =========================================================
 # SABİT VERİLER
