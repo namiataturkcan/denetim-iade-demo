@@ -52,7 +52,7 @@ st.markdown(
     """
     <style>
     .main {
-        background-color: #f7f9fa;
+        background-color: #f7f8fa;
     }
 
     h1 {
