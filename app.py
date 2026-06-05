@@ -30,7 +30,7 @@ def sifre_kontrolu():
     st.title("İade Yazısı Gövdesi Üretici")
     st.info("Demo uygulamasına erişmek için şifre giriniz.")
 
-    girilen_sifre = st.text_input("Demo şifresi", type="password")
+    girilen_sifre = st.text_input("Demo Şifresi", type="password")
 
     if st.button("Giriş"):
         if girilen_sifre == demo_sifresini_getir():
@@ -43,6 +43,8 @@ def sifre_kontrolu():
 
 
 sifre_kontrolu()
+
+
 # =========================================================
 # GÖRSEL DÜZENLEME
 # =========================================================
@@ -100,11 +102,6 @@ st.markdown(
         border-radius: 10px !important;
     }
 
-    div[data-testid="stForm"] {
-        border-radius: 12px;
-        background-color: #ffffff;
-    }
-
     .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
@@ -114,6 +111,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 # =========================================================
 # SABİT VERİLER
@@ -137,14 +135,12 @@ def madde_kisa_adi(madde: str) -> str:
     return MADDE_KISA_ADLARI.get(madde, madde)
 
 
-# Giriş kısmında 97 seçilemez.
 GIRIS_MADDE_SECENEKLERI = [
     "Anayasa’nın 138’inci maddesi",
     "TBMM İçtüzüğü’nün 67’nci maddesi",
     "TBMM İçtüzüğü’nün 96’ncı maddesi",
 ]
 
-# 97 yalnızca soru kısmında seçilebilir.
 SORU_MADDE_SECENEKLERI = [
     "Anayasa’nın 138’inci maddesi",
     "TBMM İçtüzüğü’nün 67’nci maddesi",
@@ -152,7 +148,6 @@ SORU_MADDE_SECENEKLERI = [
     "TBMM İçtüzüğü’nün 97’nci maddesi",
 ]
 
-# Önergenin tamamı bakımından 97 şimdilik kapalı.
 TAMAMI_MADDE_SECENEKLERI = [
     "Anayasa’nın 138’inci maddesi",
     "TBMM İçtüzüğü’nün 67’nci maddesi",
@@ -516,7 +511,6 @@ def soru_grubu_ifadesi(entries: list) -> str:
     if not entries:
         return ""
 
-    # Eğer bütün seçilenler sorunun tamamıysa daha sade ifade kullan.
     if all(e.get("cumle") is None for e in entries):
         soru_numaralari = sorted(set(int(e["soru_no"]) for e in entries))
 
@@ -525,7 +519,6 @@ def soru_grubu_ifadesi(entries: list) -> str:
 
         return f"{turkce_liste(soru_numaralari)} numaralı sorularının"
 
-    # Soru numarasına göre grupla.
     soru_gruplari = []
 
     for entry in entries:
@@ -898,14 +891,14 @@ def gerekce_secimleri_goster(prefix: str, maddeler: list) -> dict:
 
     if "TBMM İçtüzüğü’nün 67’nci maddesi" in maddeler:
         gerekce_67 = st.selectbox(
-            "İçtüzük 67 gerekçesi",
+            "İçtüzük 67 Gerekçesi",
             IC67_GEREKCE_SECENEKLERI,
             key=f"{prefix}_gerekce_67"
         )
 
     if "TBMM İçtüzüğü’nün 96’ncı maddesi" in maddeler:
         gerekce_96 = st.selectbox(
-            "İçtüzük 96 gerekçesi",
+            "İçtüzük 96 Gerekçesi",
             IC96_GEREKCE_SECENEKLERI,
             key=f"{prefix}_gerekce_96"
         )
@@ -965,18 +958,18 @@ st.subheader("1. İade Türü")
 iade_turu = st.selectbox(
     "İade Türü",
     [
-        "Olağan İade",
-        "Hatalı Seçim Çevresi"
+        "Olağan İade Usulü",
+        "Seçim Çevresi Düzeltme"
     ]
 )
 
-if iade_turu == "Hatalı Seçim Çevresi":
+if iade_turu == "Seçim Çevresi Düzeltme":
     st.subheader("Üretilen Yazı Gövdesi")
 
-    st.text_area("Yazı gövdesi", SECIM_CEVRESI_GOVDESI, height=500)
+    st.text_area("Yazı Gövdesi", SECIM_CEVRESI_GOVDESI, height=500)
 
     st.download_button(
-        label="Yazı gövdesini TXT olarak indir",
+        label="Yazı Gövdesini TXT Olarak İndir",
         data=SECIM_CEVRESI_GOVDESI,
         file_name="secim_cevresi_duzeltme_govdesi.txt",
         mime="text/plain"
@@ -996,22 +989,22 @@ col1, col2 = st.columns(2)
 with col1:
     oner_sayisi = st.radio(
         "Önerge Sayısı",
-        ["Tek Önerge", "Birden Fazla Önerge"],
+        ["Tek önerge", "Birden fazla önerge"],
         horizontal=True
     )
 
 with col2:
     yeniden_iade_turu = st.selectbox(
-        "İade edilen önergenin yenilenmesi mi?",
+        "Yeniden Verilen Önerge Mi?",
         [
             "Hayır",
             "Bir önceki iade sonrası yeniden verilmiş",
-            "Birden fazla iade sonrası yeniden verilmiş"
+            "Birden fazla önceki iade sonrası yeniden verilmiş"
         ]
     )
 
 tamami_iade = st.checkbox(
-    "Önergenin tamamı iadeye konu edilecek",
+    "Önergenin Tamamı İadeye Konu Edilecek",
     value=False,
     help="Bu seçenek işaretlenirse giriş ve soru kısmı seçimleri kapatılır."
 )
@@ -1029,7 +1022,7 @@ if tamami_iade:
     )
 
     tamami_maddeler = st.multiselect(
-        "Önergenin tamamı için ilgili hüküm/hükümler",
+        "Önergenin Tamamı İçin İlgili Hüküm/Hükümler",
         TAMAMI_MADDE_SECENEKLERI,
         default=["TBMM İçtüzüğü’nün 96’ncı maddesi"],
         format_func=madde_kisa_adi
@@ -1044,23 +1037,23 @@ if tamami_iade:
         tamami_gerekceler["96"].append(gerekce_secimleri["gerekce_96"])
 
 else:
-    st.subheader("3. İadeye Konu Olan İbare Seçimi")
+    st.subheader("3. İadeye Konu Bölüm Seçimi")
 
     bolum_col1, bolum_col2 = st.columns(2)
 
     with bolum_col1:
-        giris_secili = st.checkbox("Giriş kısmı", value=True, key="bolum_giris_secili")
+        giris_secili = st.checkbox("Giriş Kısmı", value=True, key="bolum_giris_secili")
 
     with bolum_col2:
-        soru_secili = st.checkbox("Soru kısmı", value=False, key="bolum_soru_secili")
+        soru_secili = st.checkbox("Soru Kısmı", value=False, key="bolum_soru_secili")
 
     if giris_secili:
-        st.subheader("4. Giriş kısmındaki iadeye konu yerler")
+        st.subheader("4. Giriş Kısmındaki İadeye Konu Yerler")
 
         c1, c2 = st.columns([1, 1])
 
         with c1:
-            if st.button("➕ Giriş Kısmına Yeni İadeye Konu İbare Ekle"):
+            if st.button("➕ Giriş Kısmı İçin Yeni İadeye Konu Yer Ekle"):
                 giris_satiri_ekle()
                 st.rerun()
 
@@ -1071,7 +1064,7 @@ else:
                 st.rerun()
 
         for row_id in list(st.session_state.giris_ids):
-            with st.expander(f"Giriş kısmı - iadeye konu yer #{row_id}", expanded=True):
+            with st.expander(f"Giriş Kısmı - İadeye Konu Yer #{row_id}", expanded=True):
                 sil_col, _ = st.columns([1, 5])
 
                 with sil_col:
@@ -1113,7 +1106,7 @@ else:
                         cumle = None
 
                 maddeler = st.multiselect(
-                    "İadeye Konu İbare İçin İlgili Hüküm/Hükümler",
+                    "Bu İadeye Konu Yer İçin İlgili Hüküm/Hükümler",
                     GIRIS_MADDE_SECENEKLERI,
                     default=["TBMM İçtüzüğü’nün 96’ncı maddesi"],
                     key=f"giris_maddeler_{row_id}",
@@ -1133,23 +1126,23 @@ else:
                     })
 
     if soru_secili:
-        st.subheader("5. Soru Kısmındaki İadeye Konu İbareler")
+        st.subheader("5. Soru Kısmındaki İadeye Konu Yerler")
 
         c1, c2 = st.columns([1, 1])
 
         with c1:
-            if st.button("➕ Soru kısmı için yeni iadeye konu yer ekle"):
+            if st.button("➕ Soru Kısmı İçin Yeni İadeye Konu Yer Ekle"):
                 soru_satiri_ekle()
                 st.rerun()
 
         with c2:
-            if st.button("Soru kısmı satırlarını sıfırla"):
+            if st.button("Soru Kısmı Satırlarını Sıfırla"):
                 st.session_state.soru_ids = [1]
                 st.session_state.next_soru_id = 2
                 st.rerun()
 
         for row_id in list(st.session_state.soru_ids):
-            with st.expander(f"Soru kısmı - iadeye konu yer #{row_id}", expanded=True):
+            with st.expander(f"Soru Kısmı - İadeye Konu Yer #{row_id}", expanded=True):
                 sil_col, _ = st.columns([1, 5])
 
                 with sil_col:
@@ -1161,7 +1154,7 @@ else:
 
                 with col_a:
                     soru_no = st.number_input(
-                        "Soru numarası",
+                        "Soru Numarası",
                         min_value=1,
                         max_value=100,
                         value=1,
@@ -1180,7 +1173,7 @@ else:
                 with col_c:
                     if soru_kapsam == "Belirli cümle":
                         soru_cumle = st.number_input(
-                            "Cümle numarası",
+                            "Cümle Numarası",
                             min_value=1,
                             max_value=30,
                             value=1,
@@ -1198,7 +1191,7 @@ else:
 
                 if soru_metni_iadeye_konu:
                     maddeler = st.multiselect(
-                        "İadeye Konu Soru İçin İlgili Hüküm/Hükümler",
+                        "Bu İadeye Konu Soru/Kısım İçin İlgili Hüküm/Hükümler",
                         SORU_MADDE_SECENEKLERI,
                         default=[
                             "TBMM İçtüzüğü’nün 96’ncı maddesi",
@@ -1221,7 +1214,7 @@ else:
                         })
 
                 ek_belge_var = st.checkbox(
-                    "Bu soruya ek belge eklenmiş",
+                    "Bu Soruya Ek Belge Eklenmiş",
                     value=False,
                     key=f"ek_belge_{row_id}"
                 )
@@ -1237,14 +1230,14 @@ else:
                         "gerekce_96": "Ek belge yasağı",
                     })
 
-with st.expander("6. İsteğe bağlı özel açıklama"):
+with st.expander("6. İsteğe Bağlı Özel Açıklama"):
     st.caption(
         "Bu alan, standart kalıba girmeyen istisnai bir açıklama eklemek için bırakılmıştır. "
         "Boş bırakılırsa metne hiçbir şey eklenmez."
     )
 
     ek_aciklama = st.text_area(
-        "Özel açıklama cümlesi",
+        "Özel Açıklama Cümlesi",
         height=80,
         placeholder="Gerekirse esas iade değerlendirme paragrafına ilave edilecek açıklamayı yazabilirsiniz. Boş bırakılabilir."
     )
@@ -1274,17 +1267,17 @@ yazi_govdesi = yazi_govdesi_uret(
 
 st.subheader("7. Üretilen Yazı Gövdesi")
 
-st.text_area("Yazı gövdesi", yazi_govdesi, height=550)
+st.text_area("Yazı Gövdesi", yazi_govdesi, height=550)
 
 st.download_button(
-    label="Yazı gövdesini TXT olarak indir",
+    label="Yazı Gövdesini TXT Olarak İndir",
     data=yazi_govdesi,
     file_name="iade_yazisi_govdesi.txt",
     mime="text/plain"
 )
 
-with st.expander("Sadece esas iade değerlendirme paragrafını göster"):
-    st.text_area("Esas iade değerlendirme paragrafı", esas_paragraf, height=180)
+with st.expander("Sadece Esas İade Değerlendirme Paragrafını Göster"):
+    st.text_area("Esas İade Değerlendirme Paragrafı", esas_paragraf, height=180)
 
 st.warning(
     "Not: Bu metin taslaktır. EBYS’ye aktarılmadan önce ilgili önerge, madde gerekçesi "
