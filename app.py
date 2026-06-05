@@ -893,14 +893,14 @@ st.info(
 st.subheader("1. İade türü")
 
 iade_turu = st.selectbox(
-    "İade türü",
+    "İade Türü",
     [
-        "Olağan İade Usulü",
-        "Seçim çevresi düzeltme"
+        "Olağan İade",
+        "Hatalı Seçim Çevresi"
     ]
 )
 
-if iade_turu == "Seçim çevresi düzeltme":
+if iade_turu == "Hatalı Seçim Çevresi22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222":
     st.subheader("Üretilen Yazı Gövdesi")
 
     st.text_area("Yazı gövdesi", SECIM_CEVRESI_GOVDESI, height=500)
@@ -925,18 +925,18 @@ col1, col2 = st.columns(2)
 
 with col1:
     oner_sayisi = st.radio(
-        "Önerge sayısı",
-        ["Tek önerge", "Birden fazla önerge"],
+        "Önerge Sayısı",
+        ["Tek Önerge", "Birden Fazla Önerge"],
         horizontal=True
     )
 
 with col2:
     yeniden_iade_turu = st.selectbox(
-        "Yeniden verilen önerge mi?",
+        "İade edilen önergenin yenilenmesi mi?",
         [
             "Hayır",
             "Bir önceki iade sonrası yeniden verilmiş",
-            "Birden fazla önceki iade sonrası yeniden verilmiş"
+            "Birden fazla iade sonrası yeniden verilmiş"
         ]
     )
 
@@ -974,7 +974,7 @@ if tamami_iade:
         tamami_gerekceler["96"].append(gerekce_secimleri["gerekce_96"])
 
 else:
-    st.subheader("3. İadeye konu bölüm seçimi")
+    st.subheader("3. İadeye Konu Olan İbare Seçimi")
 
     bolum_col1, bolum_col2 = st.columns(2)
 
@@ -990,12 +990,12 @@ else:
         c1, c2 = st.columns([1, 1])
 
         with c1:
-            if st.button("➕ Giriş kısmı için yeni iadeye konu yer ekle"):
+            if st.button("➕ Giriş Kısmına Yeni İadeye Konu İbare Ekle"):
                 giris_satiri_ekle()
                 st.rerun()
 
         with c2:
-            if st.button("Giriş kısmı satırlarını sıfırla"):
+            if st.button("Giriş Kısmı Satırlarını Sıfırla"):
                 st.session_state.giris_ids = [1]
                 st.session_state.next_giris_id = 2
                 st.rerun()
@@ -1013,7 +1013,7 @@ else:
 
                 with col_a:
                     paragraf = st.number_input(
-                        "Paragraf numarası",
+                        "Paragraf Numarası",
                         min_value=1,
                         max_value=50,
                         value=1,
@@ -1032,7 +1032,7 @@ else:
                 with col_c:
                     if cumle_turu == "Belirli cümle":
                         cumle = st.number_input(
-                            "Cümle numarası",
+                            "Cümle Numarası",
                             min_value=1,
                             max_value=30,
                             value=1,
@@ -1043,7 +1043,7 @@ else:
                         cumle = None
 
                 maddeler = st.multiselect(
-                    "Bu iadeye konu yer için ilgili hüküm/hükümler",
+                    "İadeye Konu İbare İçin İlgili Hüküm/Hükümler",
                     GIRIS_MADDE_SECENEKLERI,
                     default=["TBMM İçtüzüğü’nün 96’ncı maddesi"],
                     key=f"giris_maddeler_{row_id}",
@@ -1063,7 +1063,7 @@ else:
                     })
 
     if soru_secili:
-        st.subheader("5. Soru kısmındaki iadeye konu yerler")
+        st.subheader("5. Soru Kısmındaki İadeye Konu İbareler")
 
         c1, c2 = st.columns([1, 1])
 
@@ -1121,14 +1121,14 @@ else:
                         soru_cumle = None
 
                 soru_metni_iadeye_konu = st.checkbox(
-                    "Bu soru metni iadeye konu edilecek",
+                    "Bu Soru Metni İadeye Konu Edilecek",
                     value=True,
                     key=f"soru_metni_iade_{row_id}"
                 )
 
                 if soru_metni_iadeye_konu:
                     maddeler = st.multiselect(
-                        "Bu iadeye konu soru/kısım için ilgili hüküm/hükümler",
+                        "İadeye Konu Soru İçin İlgili Hüküm/Hükümler",
                         SORU_MADDE_SECENEKLERI,
                         default=[
                             "TBMM İçtüzüğü’nün 96’ncı maddesi",
