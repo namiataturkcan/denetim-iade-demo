@@ -5,7 +5,7 @@ import streamlit as st
 # SAYFA AYARI
 # =========================================================
 st.set_page_config(
-    page_title="İade Yazısı Gövdesi Üretici",
+    page_title="Yazılı Soru Önergeleri İade Yazısı Hazırlama Aracı",
     layout="wide"
 )
 
@@ -52,7 +52,7 @@ st.markdown(
     """
     <style>
     .main {
-        background-color: #f7f8fa;
+        background-color: #f7f1fa;
     }
 
     h1 {
