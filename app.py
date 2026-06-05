@@ -14,10 +14,6 @@ st.set_page_config(
 # BASİT ŞİFRE KONTROLÜ
 # =========================================================
 def demo_sifresini_getir() -> str:
-    """
-    Streamlit Cloud'da DEMO_PASSWORD secret'ı tanımlanmışsa onu kullanır.
-    Tanımlı değilse geçici varsayılan şifreyi kullanır.
-    """
     try:
         return st.secrets.get("DEMO_PASSWORD", "denetim2026")
     except Exception:
@@ -50,20 +46,20 @@ sifre_kontrolu()
 
 
 # =========================================================
-# İADE METNİ ÜRETİCİ YARDIMCI FONKSİYONLAR
+# SABİT VERİLER
 # =========================================================
 MADDE_SECENEKLERI = [
+    "Anayasa’nın 138’inci maddesi",
     "TBMM İçtüzüğü’nün 67’nci maddesi",
     "TBMM İçtüzüğü’nün 96’ncı maddesi",
     "TBMM İçtüzüğü’nün 97’nci maddesi",
-    "Anayasa’nın 138’inci maddesi",
 ]
 
 MADDE_KISA_ADLARI = {
+    "Anayasa’nın 138’inci maddesi": "Anayasa 138",
     "TBMM İçtüzüğü’nün 67’nci maddesi": "İçtüzük 67",
     "TBMM İçtüzüğü’nün 96’ncı maddesi": "İçtüzük 96",
     "TBMM İçtüzüğü’nün 97’nci maddesi": "İçtüzük 97",
-    "Anayasa’nın 138’inci maddesi": "Anayasa 138",
 }
 
 
@@ -73,88 +69,71 @@ def madde_kisa_adi(madde: str) -> str:
 
 # Giriş kısmında 97 seçilemez.
 GIRIS_MADDE_SECENEKLERI = [
+    "Anayasa’nın 138’inci maddesi",
     "TBMM İçtüzüğü’nün 67’nci maddesi",
     "TBMM İçtüzüğü’nün 96’ncı maddesi",
-    "Anayasa’nın 138’inci maddesi",
 ]
 
 # 97 yalnızca soru kısmında seçilebilir.
 SORU_MADDE_SECENEKLERI = [
+    "Anayasa’nın 138’inci maddesi",
     "TBMM İçtüzüğü’nün 67’nci maddesi",
     "TBMM İçtüzüğü’nün 96’ncı maddesi",
     "TBMM İçtüzüğü’nün 97’nci maddesi",
-    "Anayasa’nın 138’inci maddesi",
 ]
 
-# Önergenin tamamı bakımından 97 seçeneği şimdilik kapalı.
+# Önergenin tamamı bakımından 97 şimdilik kapalı.
 TAMAMI_MADDE_SECENEKLERI = [
+    "Anayasa’nın 138’inci maddesi",
     "TBMM İçtüzüğü’nün 67’nci maddesi",
     "TBMM İçtüzüğü’nün 96’ncı maddesi",
-    "Anayasa’nın 138’inci maddesi",
 ]
 
-
 MADDE_BILGILERI = {
+    "Anayasa’nın 138’inci maddesi": {
+        "tur": "Anayasa",
+        "duzenleme": "Anayasa’nın",
+        "madde": "138’inci",
+        "sira": 1,
+    },
     "TBMM İçtüzüğü’nün 67’nci maddesi": {
         "tur": "İçtüzük",
         "duzenleme": "TBMM İçtüzüğü’nün",
         "madde": "67’nci",
-        "sira": 1,
+        "sira": 2,
     },
     "TBMM İçtüzüğü’nün 96’ncı maddesi": {
         "tur": "İçtüzük",
         "duzenleme": "TBMM İçtüzüğü’nün",
         "madde": "96’ncı",
-        "sira": 2,
+        "sira": 3,
     },
     "TBMM İçtüzüğü’nün 97’nci maddesi": {
         "tur": "İçtüzük",
         "duzenleme": "TBMM İçtüzüğü’nün",
         "madde": "97’nci",
-        "sira": 3,
-    },
-    "Anayasa’nın 138’inci maddesi": {
-        "tur": "Anayasa",
-        "duzenleme": "Anayasa’nın",
-        "madde": "138’inci",
         "sira": 4,
     },
 }
 
+IC67_GEREKCE_SECENEKLERI = [
+    "Toplumun bir kesimi / belirli kişi veya kişiler yönünden yaralayıcı ifade",
+    "Kaba ve yaralayıcı ifade",
+    "Kaba ifadeler veya toplumun bir kesimi yönünden yaralayıcı ifade",
+]
 
-MADDE_ACIKLAMA_PARAGRAFLARI = {
-    "TBMM İçtüzüğü’nün 67’nci maddesi": (
-        "TBMM İçtüzüğü’nün 67’nci maddesinin ikinci fıkrasında “Başkanlığa gelen yazı ve "
-        "önergelerde kaba ve yaralayıcı sözler varsa, Başkan, gereken düzeltmelerin yapılması için, "
-        "o yazı veya önergeyi sahibine geri verir.” kuralına yer verilmiştir. Bu çerçevede Türkiye Büyük "
-        "Millet Meclisi Başkanlığı’na sunulan Meclis araştırması önergeleri ile yazılı soru önergelerinde "
-        "toplumun bir kesimi veya tamamı yahut belirli kişi veya kişiler yönünden yaralayıcı olabilecek "
-        "ifadelerin bulunması durumunda önergenin, söz konusu ifadelerin düzeltilmesi için TBMM Başkanı "
-        "tarafından sahibine iadesi gerekmektedir."
-    ),
-    "TBMM İçtüzüğü’nün 96’ncı maddesi": (
-        "TBMM İçtüzüğü’nün “Yazılı soru” başlıklı 96’ncı maddesinde “Yazılı soru, … kişisel "
-        "görüş ileri sürülmeksizin; … bir önerge ile yazılı olarak cevaplanmak üzere milletvekillerinin, "
-        "Cumhurbaşkanı yardımcıları ve bakanlara yazılı olarak soru sormalarından ibarettir.” "
-        "kuralına yer verilmiş olup; bu madde uyarınca yazılı soru önergesi metninde önerge sahibi "
-        "milletvekilinin kişisel görüşlerine yer verilmemesi gerekmektedir."
-    ),
-    "TBMM İçtüzüğü’nün 97’nci maddesi": (
-        "TBMM İçtüzüğü’nün “Sorulamayacak konular” başlıklı 97’nci maddesi “Aşağıdaki "
-        "sorular Başkanlıkça kabul edilmez: … b) Tek amacı istişare sağlamaktan ibaret konular” "
-        "hükmünü içermektedir. Bu maddede yazılı soru önergelerinde sadece belli bir konu hakkında "
-        "istişarî amaçla sorulan soruların Başkanlıkça kabul edilemeyeceği hükme bağlanmıştır."
-    ),
-    "Anayasa’nın 138’inci maddesi": (
-        "Anayasa’nın 138’inci maddesinin üçüncü fıkrasında “Görülmekte olan bir dava hakkında "
-        "Yasama Meclisinde yargı yetkisinin kullanılması ile ilgili soru sorulamaz, görüşme yapılamaz "
-        "veya herhangi bir beyanda bulunulamaz.” hükmüne yer verilmiştir. Bu hüküm uyarınca "
-        "görülmekte olan bir dava hakkında yargı yetkisinin kullanılmasına ilişkin nitelikteki soruların "
-        "yazılı soru önergesine konu edilmemesi gerekmektedir."
-    ),
-}
+IC96_GEREKCE_SECENEKLERI = [
+    "Kişisel görüş",
+    "Kısa ve gerekçesiz olma",
+    "Kişilik ve özel yaşama ilişkin konu",
+    "Ek belge yasağı",
+    "96 tam metin",
+]
 
 
+# =========================================================
+# AÇIKLAMA PARAGRAFLARI
+# =========================================================
 STANDART_ACIKLAMA_PARAGRAFI = (
     "Türkiye Büyük Millet Meclisi (TBMM) İçtüzüğü’nün 67’nci ve 96’ncı maddeleri "
     "uyarınca TBMM Başkanlığı’na sunulan yazılı soru önergeleri Anayasa ve İçtüzük "
@@ -163,7 +142,118 @@ STANDART_ACIKLAMA_PARAGRAFI = (
     "sahibine iade edilmektedir."
 )
 
+ANAYASA_138_PARAGRAFI = (
+    "Anayasa’nın 138’inci maddesinin üçüncü fıkrasında “Görülmekte olan bir dava hakkında "
+    "Yasama Meclisinde yargı yetkisinin kullanılması ile ilgili soru sorulamaz, görüşme yapılamaz "
+    "veya herhangi bir beyanda bulunulamaz.” hükmüne yer verilmiştir. Bu hüküm uyarınca "
+    "görülmekte olan bir dava hakkında yargı yetkisinin kullanılmasına ilişkin nitelikteki soruların "
+    "yazılı soru önergesine konu edilmemesi gerekmektedir."
+)
 
+IC67_PARAGRAFLARI = {
+    "Toplumun bir kesimi / belirli kişi veya kişiler yönünden yaralayıcı ifade": (
+        "TBMM İçtüzüğü’nün 67’nci maddesinin ikinci fıkrasında “Başkanlığa gelen yazı ve "
+        "önergelerde kaba ve yaralayıcı sözler varsa, Başkan, gereken düzeltmelerin yapılması için, "
+        "o yazı veya önergeyi sahibine geri verir.” kuralına yer verilmiştir. Bu çerçevede Türkiye Büyük "
+        "Millet Meclisi Başkanlığı’na sunulan Meclis araştırması önergeleri ile yazılı soru önergelerinde "
+        "toplumun bir kesimi veya tamamı yahut belirli kişi veya kişiler yönünden yaralayıcı olabilecek "
+        "ifadelerin bulunması durumunda önergenin, söz konusu ifadelerin düzeltilmesi için TBMM Başkanı "
+        "tarafından sahibine iadesi gerekmektedir."
+    ),
+    "Kaba ve yaralayıcı ifade": (
+        "TBMM İçtüzüğü’nün 67’nci maddesinin ikinci fıkrasında “Başkanlığa gelen yazı ve "
+        "önergelerde kaba ve yaralayıcı sözler varsa, Başkan, gereken düzeltmelerin yapılması için, "
+        "o yazı veya önergeyi sahibine geri verir.” kuralına yer verilmiştir. Bu çerçevede Türkiye Büyük "
+        "Millet Meclisi Başkanlığı’na sunulan Meclis araştırması önergeleri ile yazılı soru önergelerinde "
+        "kaba ve yaralayıcı ifadelerin bulunması durumunda önergenin, söz konusu ifadelerin düzeltilmesi "
+        "için TBMM Başkanı tarafından sahibine iadesi gerekmektedir."
+    ),
+    "Kaba ifadeler veya toplumun bir kesimi yönünden yaralayıcı ifade": (
+        "TBMM İçtüzüğü’nün 67’nci maddesinin ikinci fıkrasında “Başkanlığa gelen yazı ve "
+        "önergelerde kaba ve yaralayıcı sözler varsa, Başkan, gereken düzeltmelerin yapılması için, "
+        "o yazı veya önergeyi sahibine geri verir.” kuralına yer verilmiştir. Bu çerçevede Türkiye Büyük "
+        "Millet Meclisi Başkanlığı’na sunulan Meclis araştırması önergeleri ile yazılı soru önergelerinde "
+        "kaba ifadelerin ya da toplumun bir kesimi veya tamamı yahut belirli kişi veya kişiler yönünden "
+        "yaralayıcı olabilecek ifadelerin bulunması durumunda önergenin, söz konusu ifadelerin düzeltilmesi "
+        "için TBMM Başkanı tarafından sahibine iadesi gerekmektedir."
+    ),
+}
+
+IC96_PARAGRAFLARI = {
+    "Kişisel görüş": (
+        "TBMM İçtüzüğü’nün “Yazılı soru” başlıklı 96’ncı maddesinde “Yazılı soru, … kişisel "
+        "görüş ileri sürülmeksizin; … bir önerge ile yazılı olarak cevaplanmak üzere milletvekillerinin, "
+        "Cumhurbaşkanı yardımcıları ve bakanlara yazılı olarak soru sormalarından ibarettir.” "
+        "kuralına yer verilmiş olup; bu madde uyarınca yazılı soru önergesi metninde önerge sahibi "
+        "milletvekilinin kişisel görüşlerine yer verilmemesi gerekmektedir."
+    ),
+    "Kısa ve gerekçesiz olma": (
+        "TBMM İçtüzüğü’nün “Yazılı soru” başlıklı 96’ncı maddesinde “Yazılı soru, kısa, "
+        "gerekçesiz … bir önerge ile yazılı olarak cevaplanmak üzere milletvekillerinin, "
+        "Cumhurbaşkanı yardımcıları ve bakanlara yazılı olarak soru sormalarından ibarettir.” "
+        "kuralına yer verilmiş olup; bu madde uyarınca yazılı soru önergesi metninin kısa ve "
+        "gerekçesiz olması gerekmektedir."
+    ),
+    "Kişilik ve özel yaşama ilişkin konu": (
+        "TBMM İçtüzüğü’nün “Yazılı soru” başlıklı 96’ncı maddesinde “Yazılı soru, kısa, "
+        "gerekçesiz ve kişisel görüş ileri sürülmeksizin; kişilik ve özel yaşama ilişkin konuları "
+        "içermeyen bir önerge ile yazılı olarak cevaplanmak üzere milletvekillerinin, Cumhurbaşkanı "
+        "yardımcıları ve bakanlara yazılı olarak soru sormalarından ibarettir.” kuralına yer verilmiş "
+        "olup; bu madde uyarınca yazılı soru önergesi metninin kişilik ve özel yaşama ilişkin konuları "
+        "içermemesi ve metinde önerge sahibi milletvekilinin kişisel görüşlerine yer verilmemesi "
+        "gerekmektedir."
+    ),
+    "Ek belge yasağı": (
+        "TBMM İçtüzüğü’nün “Yazılı soru” başlıklı 96’ncı maddesinde “Yazılı soru, … kişisel "
+        "görüş ileri sürülmeksizin; … bir önerge ile yazılı olarak cevaplanmak üzere milletvekillerinin, "
+        "Cumhurbaşkanı yardımcıları ve bakanlara yazılı olarak soru sormalarından ibarettir. ... "
+        "Yazılı soru önergelerine belge eklenemez.” kuralına yer verilmiş olup; bu madde uyarınca "
+        "yazılı soru önergesi metninde önerge sahibi milletvekilinin kişisel görüşlerine yer verilmemesi "
+        "ve yazılı soru önergelerine belge eklenmemesi gerekmektedir."
+    ),
+    "96 tam metin": (
+        "TBMM İçtüzüğü’nün “Yazılı soru” başlıklı 96’ncı maddesinde “Yazılı soru, kısa, "
+        "gerekçesiz ve kişisel görüş ileri sürülmeksizin; kişilik ve özel yaşama ilişkin konuları "
+        "içermeyen bir önerge ile yazılı olarak cevaplanmak üzere milletvekillerinin, Cumhurbaşkanı "
+        "yardımcıları ve bakanlara yazılı olarak soru sormalarından ibarettir.” kuralına yer verilmiş "
+        "olup; bu madde uyarınca yazılı soru önergesi metninin kısa, gerekçesiz, kişisel görüş "
+        "içermeyen ve kişilik ve özel yaşama ilişkin konuları içermeyen nitelikte olması gerekmektedir."
+    ),
+}
+
+IC97_PARAGRAFI = (
+    "TBMM İçtüzüğü’nün “Sorulamayacak konular” başlıklı 97’nci maddesi “Aşağıdaki "
+    "sorular Başkanlıkça kabul edilmez: … b) Tek amacı istişare sağlamaktan ibaret konular” "
+    "hükmünü içermektedir. Bu maddede yazılı soru önergelerinde sadece belli bir konu hakkında "
+    "istişarî amaçla sorulan soruların Başkanlıkça kabul edilemeyeceği hükme bağlanmıştır."
+)
+
+SECIM_CEVRESI_GOVDESI = (
+    "Türkiye Büyük Millet Meclisi (TBMM) İçtüzüğü’nün 67’nci ve 96’ncı maddeleri "
+    "uyarınca TBMM Başkanlığı’na sunulan yazılı soru önergeleri Anayasa ve İçtüzük "
+    "hükümlerine uygunluk noktasında TBMM Başkanlığı’nca incelenmekte ve yapılan "
+    "değerlendirme sonucunda işleme alınarak gelen kâğıtlar listesinde yayımlanmakta veya "
+    "sahibine iade edilmektedir.\n\n"
+    "TBMM İçtüzüğü’nün “Yazılı soru” başlıklı 96’ncı maddesinde “Yazılı soru, … kişisel "
+    "görüş ileri sürülmeksizin; … bir önerge ile yazılı olarak cevaplanmak üzere milletvekillerinin, "
+    "Cumhurbaşkanı yardımcıları ve bakanlara yazılı olarak soru sormalarından ibarettir.” "
+    "kuralına yer verilmiştir.\n\n"
+    "Milletvekilleri tarafından Anayasa’nın 98’inci maddesi ile TBMM İçtüzüğü’nün "
+    "96’ncı maddesi uyarınca Cumhurbaşkanı yardımcıları ve bakanlara yöneltilen yazılı soru "
+    "önergelerinde önerge sahibi milletvekilinin seçim çevresini yazması gibi bir zorunluluk "
+    "bulunmamaktadır. Bununla birlikte önerge sahibi milletvekilinin önergeye seçim çevresini "
+    "yazmayı tercih etmesi durumunda, seçim çevresinin doğru ve mevzuat hükümlerine uygun "
+    "şekilde yazılması gerekmektedir.\n\n"
+    "Bu çerçevede mevzuatta yeri olmayan bir seçim çevresinin yazılı olduğu ilgi önerge "
+    "yukarıda yer verilen mevzuat hükümleri kapsamında görülmüş olup; önergede yer alan seçim "
+    "çevresi düzeltildiği takdirde önerge işleme alınabilecektir.\n\n"
+    "Bilgilerinizi rica ederim."
+)
+
+
+# =========================================================
+# SAYIYI SIRA SÖZÜNE ÇEVİRME
+# =========================================================
 SIRA_SOZLUGU = {
     1: "birinci",
     2: "ikinci",
@@ -222,6 +312,9 @@ def sira_sozu(sayi: int) -> str:
     return SIRA_SOZLUGU.get(int(sayi), f"{sayi}.")
 
 
+# =========================================================
+# YARDIMCI FONKSİYONLAR
+# =========================================================
 def turkce_liste(items, baglac="ve") -> str:
     items = [str(item) for item in items if str(item).strip()]
 
@@ -247,12 +340,6 @@ def maddeleri_sirala(maddeler: list) -> list:
 
 
 def madde_yonelme_ifadesi(maddeler: list) -> str:
-    """
-    Örn:
-    - TBMM İçtüzüğü’nün 96’ncı maddesi hükmüne
-    - TBMM İçtüzüğü’nün 96’ncı ve 97’nci maddeleri hükümlerine
-    """
-
     maddeler = maddeleri_sirala(maddeler)
 
     if not maddeler:
@@ -278,15 +365,6 @@ def madde_yonelme_ifadesi(maddeler: list) -> str:
 
 
 def sonuc_hukum_ifadesi(maddeler: list) -> str:
-    """
-    Son cümledeki:
-    - İçtüzük hükmüne
-    - İçtüzük hükümlerine
-    - Anayasa hükmüne
-    - ilgili mevzuat hükümlerine
-    kısmını üretir.
-    """
-
     maddeler = maddeleri_sirala(maddeler)
 
     if not maddeler:
@@ -309,22 +387,14 @@ def sonuc_hukum_ifadesi(maddeler: list) -> str:
 
 
 def giris_grubu_ifadesi(entries: list) -> str:
-    """
-    Giriş kısmı için daha doğal ifade üretir.
-
-    Örn:
-    - giriş kısmının üçüncü paragrafının
-    - giriş kısmının üçüncü paragrafının birinci ve ikinci cümlelerinin
-    - giriş kısmının üçüncü paragrafı ile yedinci paragrafının üçüncü cümlesinin
-    """
-
     if not entries:
         return ""
 
-    # Paragrafa göre grupla, giriş sırasını koru.
     paragraf_gruplari = []
+
     for entry in entries:
         bulundu = False
+
         for grup in paragraf_gruplari:
             if grup["paragraf"] == entry["paragraf"]:
                 grup["entries"].append(entry)
@@ -381,14 +451,16 @@ def soru_grubu_ifadesi(entries: list) -> str:
     return f"{turkce_liste(soru_numaralari)} numaralı sorularının"
 
 
-def entries_maddelerine_gore_grupla(entries: list) -> list:
-    """
-    Sorunlu yerleri tip ve madde kombinasyonuna göre gruplar.
-    Örn:
-    - Giriş kısmı / 96
-    - Soru kısmı / 96+97
-    """
+def ek_belge_grubu_ifadesi(entries: list) -> str:
+    soru_numaralari = sorted(set(int(e["soru_no"]) for e in entries))
 
+    if len(soru_numaralari) == 1:
+        return f"{soru_numaralari[0]} numaralı sorusuna ek belgenin"
+
+    return f"{turkce_liste(soru_numaralari)} numaralı sorularına ek belgelerin"
+
+
+def entries_maddelerine_gore_grupla(entries: list) -> list:
     gruplar = []
 
     for entry in entries:
@@ -396,6 +468,7 @@ def entries_maddelerine_gore_grupla(entries: list) -> list:
         anahtar = (entry["tip"], sirali_maddeler)
 
         bulundu = False
+
         for grup in gruplar:
             if grup["anahtar"] == anahtar:
                 grup["entries"].append(entry)
@@ -414,12 +487,7 @@ def entries_maddelerine_gore_grupla(entries: list) -> list:
 
 
 def sorunlu_kisimler_cumlesi_uret(entries: list) -> str:
-    """
-    Ana değerlendirme cümlesindeki sorunlu kısım + hüküm bölümünü üretir.
-    """
-
     gruplar = entries_maddelerine_gore_grupla(entries)
-
     cumle_parcalari = []
 
     for index, grup in enumerate(gruplar):
@@ -428,8 +496,12 @@ def sorunlu_kisimler_cumlesi_uret(entries: list) -> str:
 
         if tip == "giris":
             ifade = giris_grubu_ifadesi(grup["entries"])
-        else:
+        elif tip == "soru":
             ifade = soru_grubu_ifadesi(grup["entries"])
+        elif tip == "ek_belge":
+            ifade = ek_belge_grubu_ifadesi(grup["entries"])
+        else:
+            ifade = ""
 
         hukum_ifadesi = madde_yonelme_ifadesi(maddeler)
 
@@ -444,32 +516,35 @@ def sorunlu_kisimler_cumlesi_uret(entries: list) -> str:
 
 
 def sonuc_nesnesi_uret(entries: list) -> str:
-    """
-    Sonuç cümlesindeki:
-    - söz konusu kısım
-    - söz konusu kısımlar
-    - söz konusu soru
-    - söz konusu sorular
-    - söz konusu kısımlar ve soru
-    gibi ifadeleri üretir.
-    """
-
     giris_entries = [e for e in entries if e["tip"] == "giris"]
     soru_entries = [e for e in entries if e["tip"] == "soru"]
+    ek_belge_entries = [e for e in entries if e["tip"] == "ek_belge"]
 
     giris_sayisi = len(giris_entries)
     soru_sayisi = len(set(int(e["soru_no"]) for e in soru_entries))
+    ek_belge_sayisi = len(set(int(e["soru_no"]) for e in ek_belge_entries))
 
-    if giris_sayisi > 0 and soru_sayisi > 0:
+    # Ek belge, soru ile birlikteyse sonuç nesnesinde ayrıca "ek belge" demeyip soru üzerinden gider.
+    etkili_soru_sayisi = soru_sayisi if soru_sayisi > 0 else 0
+
+    if soru_sayisi == 0 and ek_belge_sayisi > 0:
+        if giris_sayisi > 0:
+            kisim_ifadesi = "kısım" if giris_sayisi == 1 else "kısımlar"
+            ek_ifadesi = "ek belge" if ek_belge_sayisi == 1 else "ek belgeler"
+            return f"söz konusu {kisim_ifadesi} ve {ek_ifadesi}"
+
+        return "söz konusu ek belge" if ek_belge_sayisi == 1 else "söz konusu ek belgeler"
+
+    if giris_sayisi > 0 and etkili_soru_sayisi > 0:
         kisim_ifadesi = "kısım" if giris_sayisi == 1 else "kısımlar"
-        soru_ifadesi = "soru" if soru_sayisi == 1 else "sorular"
+        soru_ifadesi = "soru" if etkili_soru_sayisi == 1 else "sorular"
         return f"söz konusu {kisim_ifadesi} ve {soru_ifadesi}"
 
     if giris_sayisi > 0:
         return "söz konusu kısım" if giris_sayisi == 1 else "söz konusu kısımlar"
 
-    if soru_sayisi > 0:
-        return "söz konusu soru" if soru_sayisi == 1 else "söz konusu sorular"
+    if etkili_soru_sayisi > 0:
+        return "söz konusu soru" if etkili_soru_sayisi == 1 else "söz konusu sorular"
 
     return "söz konusu kısım"
 
@@ -485,25 +560,135 @@ def tum_maddeleri_topla(entries: list) -> list:
     return maddeleri_sirala(maddeler)
 
 
+def tum_gerekceleri_topla(entries: list) -> dict:
+    ic67_gerekceleri = []
+    ic96_gerekceleri = []
+
+    for entry in entries:
+        g67 = entry.get("gerekce_67")
+        g96 = entry.get("gerekce_96")
+
+        if g67 and g67 not in ic67_gerekceleri:
+            ic67_gerekceleri.append(g67)
+
+        if g96 and g96 not in ic96_gerekceleri:
+            ic96_gerekceleri.append(g96)
+
+    return {
+        "67": ic67_gerekceleri,
+        "96": ic96_gerekceleri,
+    }
+
+
+def ic67_paragrafi_sec(gerekceler: list) -> str:
+    if not gerekceler:
+        return IC67_PARAGRAFLARI["Toplumun bir kesimi / belirli kişi veya kişiler yönünden yaralayıcı ifade"]
+
+    if "Kaba ifadeler veya toplumun bir kesimi yönünden yaralayıcı ifade" in gerekceler:
+        return IC67_PARAGRAFLARI["Kaba ifadeler veya toplumun bir kesimi yönünden yaralayıcı ifade"]
+
+    if (
+        "Kaba ve yaralayıcı ifade" in gerekceler
+        and "Toplumun bir kesimi / belirli kişi veya kişiler yönünden yaralayıcı ifade" in gerekceler
+    ):
+        return IC67_PARAGRAFLARI["Kaba ifadeler veya toplumun bir kesimi yönünden yaralayıcı ifade"]
+
+    if "Kaba ve yaralayıcı ifade" in gerekceler:
+        return IC67_PARAGRAFLARI["Kaba ve yaralayıcı ifade"]
+
+    return IC67_PARAGRAFLARI["Toplumun bir kesimi / belirli kişi veya kişiler yönünden yaralayıcı ifade"]
+
+
+def ic96_paragrafi_sec(gerekceler: list) -> str:
+    if not gerekceler:
+        return IC96_PARAGRAFLARI["Kişisel görüş"]
+
+    # En özel haller önce.
+    if "Ek belge yasağı" in gerekceler:
+        return IC96_PARAGRAFLARI["Ek belge yasağı"]
+
+    if "Kısa ve gerekçesiz olma" in gerekceler and len(gerekceler) == 1:
+        return IC96_PARAGRAFLARI["Kısa ve gerekçesiz olma"]
+
+    if "Kişilik ve özel yaşama ilişkin konu" in gerekceler:
+        return IC96_PARAGRAFLARI["Kişilik ve özel yaşama ilişkin konu"]
+
+    if "96 tam metin" in gerekceler:
+        return IC96_PARAGRAFLARI["96 tam metin"]
+
+    if "Kısa ve gerekçesiz olma" in gerekceler:
+        return IC96_PARAGRAFLARI["96 tam metin"]
+
+    return IC96_PARAGRAFLARI["Kişisel görüş"]
+
+
+def madde_aciklama_paragraflarini_uret(maddeler: list, gerekceler: dict) -> list:
+    maddeler = maddeleri_sirala(maddeler)
+    paragraflar = []
+
+    for madde in maddeler:
+        if madde == "Anayasa’nın 138’inci maddesi":
+            paragraflar.append(ANAYASA_138_PARAGRAFI)
+
+        elif madde == "TBMM İçtüzüğü’nün 67’nci maddesi":
+            paragraflar.append(ic67_paragrafi_sec(gerekceler.get("67", [])))
+
+        elif madde == "TBMM İçtüzüğü’nün 96’ncı maddesi":
+            paragraflar.append(ic96_paragrafi_sec(gerekceler.get("96", [])))
+
+        elif madde == "TBMM İçtüzüğü’nün 97’nci maddesi":
+            paragraflar.append(IC97_PARAGRAFI)
+
+    return paragraflar
+
+
+def yeniden_iade_paragrafi_uret(yeniden_iade_turu: str) -> str:
+    if yeniden_iade_turu == "Hayır":
+        return ""
+
+    if yeniden_iade_turu == "Bir önceki iade sonrası yeniden verilmiş":
+        return (
+            "Daha önce tarafınızca verilen ilgi (a) önergenin İçtüzük hükümlerine uygun olarak "
+            "yeniden düzenlendiği takdirde işleme alınabileceği hususunun ilgi (b) Başkanlık yazısı ile "
+            "tarafınıza bildirildiği; ancak anılan Başkanlık yazısına konu oluşturan hususların İçtüzük "
+            "hükümlerine uygun hale getirilmeden önergenin (ilgi (c)) yinelendiği görülmektedir."
+        )
+
+    return (
+        "Daha önce tarafınızca verilen ilgi (a) ve ilgi (c) önergelerin İçtüzük hükümlerine uygun olarak "
+        "yeniden düzenlendiği takdirde işleme alınabileceği hususunun ilgi (b) ve ilgi (ç) Başkanlık yazıları ile "
+        "tarafınıza bildirildiği; ancak anılan Başkanlık yazılarına konu oluşturan hususların İçtüzük "
+        "hükümlerine uygun hale getirilmeden önergenin (ilgi (d)) yinelendiği görülmektedir."
+    )
+
+
 def esas_iade_paragrafi_uret(
     oner_sayisi: str,
     tamami_iade: bool,
     entries: list,
     tamami_maddeler: list,
+    yeniden_iade_turu: str,
     ek_aciklama: str = ""
 ) -> str:
-    """
-    Sadece esas iade değerlendirme paragrafını üretir.
-    """
-
-    if oner_sayisi == "Tek önerge":
-        incelenen = "önergeniz incelenmiş"
+    if yeniden_iade_turu == "Bir önceki iade sonrası yeniden verilmiş":
+        giris = "Bu kapsamda ilgi (c) önergeniz incelenmiş"
         sahiplik = "önergenizin"
         sonuc_ozne = "önergeniz"
+
+    elif yeniden_iade_turu == "Birden fazla önceki iade sonrası yeniden verilmiş":
+        giris = "Bu kapsamda ilgi (d) önergeniz incelenmiş"
+        sahiplik = "önergenizin"
+        sonuc_ozne = "önergeniz"
+
     else:
-        incelenen = "önergeleriniz incelenmiş"
-        sahiplik = "önergelerinizin"
-        sonuc_ozne = "önergeleriniz"
+        if oner_sayisi == "Tek önerge":
+            giris = "Bu çerçevede ilgide kayıtlı önergeniz incelenmiş"
+            sahiplik = "önergenizin"
+            sonuc_ozne = "önergeniz"
+        else:
+            giris = "Bu çerçevede ilgide kayıtlı önergeleriniz incelenmiş"
+            sahiplik = "önergelerinizin"
+            sonuc_ozne = "önergeleriniz"
 
     ek_aciklama = ek_aciklama.strip()
 
@@ -512,8 +697,8 @@ def esas_iade_paragrafi_uret(
         sonuc_hukum = sonuc_hukum_ifadesi(tamami_maddeler)
 
         metin = (
-            f"Bu çerçevede ilgide kayıtlı {incelenen} ve {sahiplik} tamamının "
-            f"yukarıda aktarılan {hukum_ifadesi} aykırılık taşıdığı değerlendirilmiştir. "
+            f"{giris} ve {sahiplik} yukarıda aktarılan "
+            f"{hukum_ifadesi} aykırılık taşıdığı değerlendirilmiştir. "
         )
 
         if ek_aciklama:
@@ -535,56 +720,76 @@ def esas_iade_paragrafi_uret(
     sonuc_nesnesi = sonuc_nesnesi_uret(entries)
     maddeler = tum_maddeleri_topla(entries)
     sonuc_hukum = sonuc_hukum_ifadesi(maddeler)
+    ek_belge_var = any(e["tip"] == "ek_belge" for e in entries)
 
     metin = (
-        f"Bu çerçevede ilgide kayıtlı {incelenen} ve {sahiplik} "
+        f"{giris} ve {sahiplik} "
         f"{sorunlu_kisim_cumlesi} değerlendirilmiştir. "
     )
 
     if ek_aciklama:
         metin += f"{ek_aciklama} "
 
-    metin += (
-        f"Dolayısıyla {sonuc_ozne}, {sonuc_nesnesi} çıkarıldığı veya yukarıda belirtilen "
-        f"{sonuc_hukum} uygun olarak yeniden düzenlendiği takdirde işleme alınabilecektir."
-    )
+    if ek_belge_var:
+        metin += (
+            f"Dolayısıyla {sonuc_ozne}, {sonuc_nesnesi} yukarıda belirtilen "
+            f"{sonuc_hukum} uygun olarak yeniden düzenlendiği takdirde işleme alınabilecektir."
+        )
+    else:
+        metin += (
+            f"Dolayısıyla {sonuc_ozne}, {sonuc_nesnesi} çıkarıldığı veya yukarıda belirtilen "
+            f"{sonuc_hukum} uygun olarak yeniden düzenlendiği takdirde işleme alınabilecektir."
+        )
 
     return metin
 
 
-def madde_aciklama_paragraflarini_uret(maddeler: list) -> list:
-    """
-    Seçilen maddelere göre 67/96/97/138 açıklama paragraflarını üretir.
-    """
-
-    maddeler = maddeleri_sirala(maddeler)
-    paragraflar = []
-
-    for madde in maddeler:
-        paragraf = MADDE_ACIKLAMA_PARAGRAFLARI.get(madde)
-        if paragraf:
-            paragraflar.append(paragraf)
-
-    return paragraflar
-
-
-def yazi_govdesi_uret(esas_paragraf: str, maddeler: list) -> str:
-    """
-    EBYS antet/sayı/ilgi/imza kısımları hariç yazı gövdesini üretir.
-    """
-
+def yazi_govdesi_uret(
+    esas_paragraf: str,
+    maddeler: list,
+    gerekceler: dict,
+    yeniden_iade_turu: str
+) -> str:
     paragraflar = []
 
     paragraflar.append(STANDART_ACIKLAMA_PARAGRAFI)
 
-    madde_paragraflari = madde_aciklama_paragraflarini_uret(maddeler)
+    madde_paragraflari = madde_aciklama_paragraflarini_uret(maddeler, gerekceler)
     paragraflar.extend(madde_paragraflari)
+
+    yeniden_paragraf = yeniden_iade_paragrafi_uret(yeniden_iade_turu)
+    if yeniden_paragraf:
+        paragraflar.append(yeniden_paragraf)
 
     paragraflar.append(esas_paragraf)
 
     paragraflar.append("Bilgilerinizi rica ederim.")
 
     return "\n\n".join(paragraflar)
+
+
+def gerekce_secimleri_goster(prefix: str, maddeler: list) -> dict:
+    gerekce_67 = None
+    gerekce_96 = None
+
+    if "TBMM İçtüzüğü’nün 67’nci maddesi" in maddeler:
+        gerekce_67 = st.selectbox(
+            "İçtüzük 67 gerekçesi",
+            IC67_GEREKCE_SECENEKLERI,
+            key=f"{prefix}_gerekce_67"
+        )
+
+    if "TBMM İçtüzüğü’nün 96’ncı maddesi" in maddeler:
+        gerekce_96 = st.selectbox(
+            "İçtüzük 96 gerekçesi",
+            IC96_GEREKCE_SECENEKLERI,
+            key=f"{prefix}_gerekce_96"
+        )
+
+    return {
+        "gerekce_67": gerekce_67,
+        "gerekce_96": gerekce_96,
+    }
 
 
 # =========================================================
@@ -603,7 +808,36 @@ if "giris_sayisi" not in st.session_state:
 if "soru_sayisi" not in st.session_state:
     st.session_state.soru_sayisi = 1
 
-st.subheader("1. Genel seçimler")
+st.subheader("1. İade türü")
+
+iade_turu = st.selectbox(
+    "İade türü",
+    [
+        "Normal iade",
+        "Seçim çevresi düzeltme"
+    ]
+)
+
+if iade_turu == "Seçim çevresi düzeltme":
+    st.subheader("Üretilen Yazı Gövdesi")
+
+    st.text_area("Yazı gövdesi", SECIM_CEVRESI_GOVDESI, height=500)
+
+    st.download_button(
+        label="Yazı gövdesini TXT olarak indir",
+        data=SECIM_CEVRESI_GOVDESI,
+        file_name="secim_cevresi_duzeltme_govdesi.txt",
+        mime="text/plain"
+    )
+
+    st.warning(
+        "Not: Bu metin taslaktır. EBYS’ye aktarılmadan önce ilgili önerge ve Başkanlık uygulaması bakımından kontrol edilmelidir."
+    )
+
+    st.stop()
+
+
+st.subheader("2. Genel seçimler")
 
 col1, col2 = st.columns(2)
 
@@ -615,14 +849,27 @@ with col1:
     )
 
 with col2:
-    tamami_iade = st.checkbox(
-        "Önergenin tamamı iade edilecek",
-        value=False,
-        help="Bu seçenek işaretlenirse giriş ve soru kısmı seçimleri kapatılır."
+    yeniden_iade_turu = st.selectbox(
+        "Yeniden verilen önerge mi?",
+        [
+            "Hayır",
+            "Bir önceki iade sonrası yeniden verilmiş",
+            "Birden fazla önceki iade sonrası yeniden verilmiş"
+        ]
     )
+
+tamami_iade = st.checkbox(
+    "Önergenin tamamı iade edilecek",
+    value=False,
+    help="Bu seçenek işaretlenirse giriş ve soru kısmı seçimleri kapatılır."
+)
 
 entries = []
 tamami_maddeler = []
+tamami_gerekceler = {
+    "67": [],
+    "96": [],
+}
 
 if tamami_iade:
     st.warning(
@@ -636,6 +883,14 @@ if tamami_iade:
         format_func=madde_kisa_adi
     )
 
+    gerekce_secimleri = gerekce_secimleri_goster("tamami", tamami_maddeler)
+
+    if gerekce_secimleri["gerekce_67"]:
+        tamami_gerekceler["67"].append(gerekce_secimleri["gerekce_67"])
+
+    if gerekce_secimleri["gerekce_96"]:
+        tamami_gerekceler["96"].append(gerekce_secimleri["gerekce_96"])
+
 else:
     sorunlu_bolumler = st.multiselect(
         "Sorunlu bölüm/bölümler",
@@ -644,7 +899,7 @@ else:
     )
 
     if "Giriş kısmı" in sorunlu_bolumler:
-        st.subheader("2. Giriş kısmındaki sorunlu yerler")
+        st.subheader("3. Giriş kısmındaki sorunlu yerler")
 
         c1, c2 = st.columns([1, 1])
 
@@ -699,16 +954,20 @@ else:
                     format_func=madde_kisa_adi
                 )
 
+                gerekce_secimleri = gerekce_secimleri_goster(f"giris_{i}", maddeler)
+
                 if maddeler:
                     entries.append({
                         "tip": "giris",
                         "paragraf": int(paragraf),
                         "cumle": int(cumle) if cumle is not None else None,
                         "maddeler": maddeler,
+                        "gerekce_67": gerekce_secimleri["gerekce_67"],
+                        "gerekce_96": gerekce_secimleri["gerekce_96"],
                     })
 
     if "Soru kısmı" in sorunlu_bolumler:
-        st.subheader("3. Soru kısmındaki sorunlu yerler")
+        st.subheader("4. Soru kısmındaki sorunlu yerler")
 
         c1, c2 = st.columns([1, 1])
 
@@ -722,19 +981,22 @@ else:
 
         for i in range(st.session_state.soru_sayisi):
             with st.expander(f"Soru kısmı - {i + 1}. sorunlu soru", expanded=True):
-                col_a, col_b = st.columns(2)
+                soru_no = st.number_input(
+                    "Soru numarası",
+                    min_value=1,
+                    max_value=100,
+                    value=1,
+                    step=1,
+                    key=f"soru_no_{i}"
+                )
 
-                with col_a:
-                    soru_no = st.number_input(
-                        "Soru numarası",
-                        min_value=1,
-                        max_value=100,
-                        value=1,
-                        step=1,
-                        key=f"soru_no_{i}"
-                    )
+                soru_metni_iadeye_konu = st.checkbox(
+                    "Bu sorunun metni iadeye konu",
+                    value=True,
+                    key=f"soru_metni_iade_{i}"
+                )
 
-                with col_b:
+                if soru_metni_iadeye_konu:
                     maddeler = st.multiselect(
                         "Bu soru için ilgili hüküm/hükümler",
                         SORU_MADDE_SECENEKLERI,
@@ -746,14 +1008,35 @@ else:
                         format_func=madde_kisa_adi
                     )
 
-                if maddeler:
+                    gerekce_secimleri = gerekce_secimleri_goster(f"soru_{i}", maddeler)
+
+                    if maddeler:
+                        entries.append({
+                            "tip": "soru",
+                            "soru_no": int(soru_no),
+                            "maddeler": maddeler,
+                            "gerekce_67": gerekce_secimleri["gerekce_67"],
+                            "gerekce_96": gerekce_secimleri["gerekce_96"],
+                        })
+
+                ek_belge_var = st.checkbox(
+                    "Bu soruya ek belge eklenmiş",
+                    value=False,
+                    key=f"ek_belge_{i}"
+                )
+
+                if ek_belge_var:
+                    st.info("Ek belge yasağı, İçtüzük 96 kapsamında değerlendirilecektir.")
+
                     entries.append({
-                        "tip": "soru",
+                        "tip": "ek_belge",
                         "soru_no": int(soru_no),
-                        "maddeler": maddeler,
+                        "maddeler": ["TBMM İçtüzüğü’nün 96’ncı maddesi"],
+                        "gerekce_67": None,
+                        "gerekce_96": "Ek belge yasağı",
                     })
 
-st.subheader("4. Ek açıklama")
+st.subheader("5. Ek açıklama")
 
 ek_aciklama = st.text_area(
     "Ek açıklama cümlesi, isteğe bağlı",
@@ -763,25 +1046,30 @@ ek_aciklama = st.text_area(
 
 if tamami_iade:
     kullanilan_maddeler = maddeleri_sirala(tamami_maddeler)
+    kullanilan_gerekceler = tamami_gerekceler
 else:
     kullanilan_maddeler = tum_maddeleri_topla(entries)
+    kullanilan_gerekceler = tum_gerekceleri_topla(entries)
 
 esas_paragraf = esas_iade_paragrafi_uret(
     oner_sayisi=oner_sayisi,
     tamami_iade=tamami_iade,
     entries=entries,
     tamami_maddeler=tamami_maddeler,
+    yeniden_iade_turu=yeniden_iade_turu,
     ek_aciklama=ek_aciklama
 )
 
 yazi_govdesi = yazi_govdesi_uret(
     esas_paragraf=esas_paragraf,
-    maddeler=kullanilan_maddeler
+    maddeler=kullanilan_maddeler,
+    gerekceler=kullanilan_gerekceler,
+    yeniden_iade_turu=yeniden_iade_turu
 )
 
-st.subheader("5. Üretilen Yazı Gövdesi")
+st.subheader("6. Üretilen Yazı Gövdesi")
 
-st.text_area("Yazı gövdesi", yazi_govdesi, height=500)
+st.text_area("Yazı gövdesi", yazi_govdesi, height=550)
 
 st.download_button(
     label="Yazı gövdesini TXT olarak indir",
