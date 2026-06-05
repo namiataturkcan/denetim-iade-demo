@@ -960,7 +960,7 @@ st.info(
     "Gerçek önerge PDF'i yüklenmez; EBYS antet, sayı, konu, ilgi, imza ve ek kısımları üretilmez."
 )
 
-st.subheader("1. İade türü")
+st.subheader("1. İade Türü")
 
 iade_turu = st.selectbox(
     "İade Türü",
@@ -970,7 +970,7 @@ iade_turu = st.selectbox(
     ]
 )
 
-if iade_turu == "Hatalı Seçim Çevresi22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222":
+if iade_turu == "Hatalı Seçim Çevresi":
     st.subheader("Üretilen Yazı Gövdesi")
 
     st.text_area("Yazı gövdesi", SECIM_CEVRESI_GOVDESI, height=500)
@@ -989,7 +989,7 @@ if iade_turu == "Hatalı Seçim Çevresi2222222222222222222222222222222222222222
     st.stop()
 
 
-st.subheader("2. Genel bilgiler")
+st.subheader("2. Genel Bilgiler")
 
 col1, col2 = st.columns(2)
 
