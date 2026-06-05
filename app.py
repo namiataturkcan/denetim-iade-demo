@@ -5,7 +5,7 @@ import streamlit as st
 # SAYFA AYARI
 # =========================================================
 st.set_page_config(
-    page_title="Yazılı Soru Önergeleri İade Yazısı Hazırlama Aracı",
+    page_title="İade Yazısı Metni Üretici",
     layout="wide"
 )
 
@@ -27,7 +27,7 @@ def sifre_kontrolu():
     if st.session_state.authenticated:
         return
 
-    st.title("İade Yazısı Gövdesi Üretici")
+    st.title("İade Yazısı Metni Üretici")
     st.info("Demo uygulamasına erişmek için şifre giriniz.")
 
     girilen_sifre = st.text_input("Demo Şifresi", type="password")
@@ -111,6 +111,136 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+
+# =========================================================
+# BAKAN / MUHATAP LİSTESİ
+# =========================================================
+BAKAN_LISTESI = [
+    {"ad": "Cevdet YILMAZ", "unvan": "Cumhurbaşkanı Yardımcısı"},
+    {"ad": "Akın GÜRLEK", "unvan": "Adalet Bakanı"},
+    {"ad": "Mahinur ÖZDEMİR GÖKTAŞ", "unvan": "Aile ve Sosyal Hizmetler Bakanı"},
+    {"ad": "Vedat IŞIKHAN", "unvan": "Çalışma ve Sosyal Güvenlik Bakanı"},
+    {"ad": "Murat KURUM", "unvan": "Çevre, Şehircilik ve İklim Değişikliği Bakanı"},
+    {"ad": "Hakan FİDAN", "unvan": "Dışişleri Bakanı"},
+    {"ad": "Alparslan BAYRAKTAR", "unvan": "Enerji ve Tabii Kaynaklar Bakanı"},
+    {"ad": "Osman Aşkın BAK", "unvan": "Gençlik ve Spor Bakanı"},
+    {"ad": "Mehmet ŞİMŞEK", "unvan": "Hazine ve Maliye Bakanı"},
+    {"ad": "Mustafa ÇİFTÇİ", "unvan": "İçişleri Bakanı"},
+    {"ad": "Mehmet Nuri ERSOY", "unvan": "Kültür ve Turizm Bakanı"},
+    {"ad": "Yusuf TEKİN", "unvan": "Millî Eğitim Bakanı"},
+    {"ad": "Yaşar GÜLER", "unvan": "Millî Savunma Bakanı"},
+    {"ad": "Kemal MEMİŞOĞLU", "unvan": "Sağlık Bakanı"},
+    {"ad": "Mehmet Fatih KACIR", "unvan": "Sanayi ve Teknoloji Bakanı"},
+    {"ad": "İbrahim YUMAKLI", "unvan": "Tarım ve Orman Bakanı"},
+    {"ad": "Ömer BOLAT", "unvan": "Ticaret Bakanı"},
+    {"ad": "Abdulkadir URALOĞLU", "unvan": "Ulaştırma ve Altyapı Bakanı"},
+    {"ad": "Numan KURTULMUŞ", "unvan": "Türkiye Büyük Millet Meclisi Başkanı"},
+]
+
+BAKAN_SECENEKLERI = [
+    f"{item['unvan']} - {item['ad']}" for item in BAKAN_LISTESI
+]
+
+BAKAN_MAP = {
+    f"{item['unvan']} - {item['ad']}": item for item in BAKAN_LISTESI
+}
+
+
+def muhatap_ilgi_ifadesi_uret(secili_muhatap: str) -> str:
+    item = BAKAN_MAP[secili_muhatap]
+    ad = item["ad"]
+    unvan = item["unvan"]
+
+    if unvan == "Cumhurbaşkanı Yardımcısı":
+        return f"Cumhurbaşkanı Yardımcısı’na (Sayın {ad})"
+
+    if unvan == "Türkiye Büyük Millet Meclisi Başkanı":
+        return "Türkiye Büyük Millet Meclisi Başkanı’na"
+
+    return f"{unvan}’na"
+
+
+def milletvekili_bloku_uret(ad_soyad: str, secim_cevresi: str) -> str:
+    ad_soyad = ad_soyad.strip() or "[Milletvekili Adı Soyadı]"
+    secim_cevresi = secim_cevresi.strip() or "[Seçim Çevresi]"
+
+    return f"Sayın {ad_soyad}\n{secim_cevresi} Milletvekili"
+
+
+def ilgi_normal_uret(muhatap_ifadesi: str, tarih: str, sayi: str) -> str:
+    tarih = tarih.strip() or "[önerge tarihi]"
+    sayi = sayi.strip() or "[önerge sayısı]"
+
+    return (
+        f"İlgi : {muhatap_ifadesi} yöneltilen {tarih} tarihli ve "
+        f"{sayi} sayılı yazılı soru önergesi."
+    )
+
+
+def ilgi_yeniden_tek_uret(
+    muhatap_ifadesi: str,
+    onceki_tarih: str,
+    onceki_sayi: str,
+    yazi_tarih: str,
+    yazi_sayi: str,
+    yeni_tarih: str,
+    yeni_sayi: str
+) -> str:
+    onceki_tarih = onceki_tarih.strip() or "[önceki önerge tarihi]"
+    onceki_sayi = onceki_sayi.strip() or "[önceki önerge sayısı]"
+    yazi_tarih = yazi_tarih.strip() or "[Başkanlık yazısı tarihi]"
+    yazi_sayi = yazi_sayi.strip() or "[Başkanlık yazısı sayısı]"
+    yeni_tarih = yeni_tarih.strip() or "[yeni önerge tarihi]"
+    yeni_sayi = yeni_sayi.strip() or "[yeni önerge sayısı]"
+
+    return (
+        f"İlgi : a) {muhatap_ifadesi} yöneltilen {onceki_tarih} tarihli ve "
+        f"{onceki_sayi} sayılı yazılı soru önergesi.\n"
+        f"       b) {yazi_tarih} tarihli ve {yazi_sayi} sayılı yazımız.\n"
+        f"       c) {muhatap_ifadesi} yöneltilen {yeni_tarih} tarihli ve "
+        f"{yeni_sayi} sayılı yazılı soru önergesi."
+    )
+
+
+def ilgi_yeniden_coklu_uret(
+    muhatap_ifadesi: str,
+    ilk_tarih: str,
+    ilk_sayi: str,
+    ilk_yazi_tarih: str,
+    ilk_yazi_sayi: str,
+    ikinci_tarih: str,
+    ikinci_sayi: str,
+    ikinci_yazi_tarih: str,
+    ikinci_yazi_sayi: str,
+    son_tarih: str,
+    son_sayi: str
+) -> str:
+    ilk_tarih = ilk_tarih.strip() or "[ilk önerge tarihi]"
+    ilk_sayi = ilk_sayi.strip() or "[ilk önerge sayısı]"
+    ilk_yazi_tarih = ilk_yazi_tarih.strip() or "[ilk Başkanlık yazısı tarihi]"
+    ilk_yazi_sayi = ilk_yazi_sayi.strip() or "[ilk Başkanlık yazısı sayısı]"
+    ikinci_tarih = ikinci_tarih.strip() or "[ikinci önerge tarihi]"
+    ikinci_sayi = ikinci_sayi.strip() or "[ikinci önerge sayısı]"
+    ikinci_yazi_tarih = ikinci_yazi_tarih.strip() or "[ikinci Başkanlık yazısı tarihi]"
+    ikinci_yazi_sayi = ikinci_yazi_sayi.strip() or "[ikinci Başkanlık yazısı sayısı]"
+    son_tarih = son_tarih.strip() or "[son önerge tarihi]"
+    son_sayi = son_sayi.strip() or "[son önerge sayısı]"
+
+    return (
+        f"İlgi : a) {muhatap_ifadesi} yöneltilen {ilk_tarih} tarihli ve "
+        f"{ilk_sayi} sayılı yazılı soru önergesi.\n"
+        f"       b) {ilk_yazi_tarih} tarihli ve {ilk_yazi_sayi} sayılı yazımız.\n"
+        f"       c) {muhatap_ifadesi} yöneltilen {ikinci_tarih} tarihli ve "
+        f"{ikinci_sayi} sayılı yazılı soru önergesi.\n"
+        f"       ç) {ikinci_yazi_tarih} tarihli ve {ikinci_yazi_sayi} sayılı yazımız.\n"
+        f"       d) {muhatap_ifadesi} yöneltilen {son_tarih} tarihli ve "
+        f"{son_sayi} sayılı yazılı soru önergesi."
+    )
+
+
+def tam_yazi_metni_uret(mv_bloku: str, ilgi_metni: str, govde: str) -> str:
+    return f"{mv_bloku}\n\n{ilgi_metni}\n\n{govde}"
 
 
 # =========================================================
@@ -946,14 +1076,33 @@ def soru_satiri_sil(row_id: int):
 # =========================================================
 # ARAYÜZ
 # =========================================================
-st.title("İade Yazısı Gövdesi Üretici")
+st.title("İade Yazısı Metni Üretici")
 
 st.info(
-    "Bu demo uygulama yalnızca iade yazısı gövdesini üretir. "
-    "Gerçek önerge PDF'i yüklenmez; EBYS antet, sayı, konu, ilgi, imza ve ek kısımları üretilmez."
+    "Bu demo uygulama EBYS antet, sayı, konu, imza ve ek kısımlarını üretmez. "
+    "Milletvekili bilgisi, ilgi kısmı ve iade yazısı gövdesini üretir."
 )
 
-st.subheader("1. İade Türü")
+st.subheader("1. Milletvekili Bilgileri")
+
+mv_col1, mv_col2 = st.columns(2)
+
+with mv_col1:
+    milletvekili_ad = st.text_input(
+        "Milletvekili Adı Soyadı",
+        placeholder="Örn: Yasin ÖZTÜRK"
+    )
+
+with mv_col2:
+    secim_cevresi = st.text_input(
+        "Seçim Çevresi",
+        placeholder="Örn: Denizli"
+    )
+
+milletvekili_bloku = milletvekili_bloku_uret(milletvekili_ad, secim_cevresi)
+
+
+st.subheader("2. İade Türü")
 
 iade_turu = st.selectbox(
     "İade Türü",
@@ -963,15 +1112,44 @@ iade_turu = st.selectbox(
     ]
 )
 
-if iade_turu == "Seçim Çevresi Düzeltme":
-    st.subheader("Üretilen Yazı Gövdesi")
 
-    st.text_area("Yazı Gövdesi", SECIM_CEVRESI_GOVDESI, height=500)
+st.subheader("3. İlgi Bilgileri")
+
+secili_muhatap = st.selectbox(
+    "Önergenin Yöneltildiği Muhatap",
+    BAKAN_SECENEKLERI
+)
+
+muhatap_ifadesi = muhatap_ilgi_ifadesi_uret(secili_muhatap)
+
+if iade_turu == "Seçim Çevresi Düzeltme":
+    ilgi_col1, ilgi_col2 = st.columns(2)
+
+    with ilgi_col1:
+        normal_tarih = st.text_input(
+            "Önerge Tarihi",
+            placeholder="Örn: 05.06.2026",
+            key="secim_ilgi_tarih"
+        )
+
+    with ilgi_col2:
+        normal_sayi = st.text_input(
+            "Önerge Sayısı",
+            placeholder="Örn: 1870000",
+            key="secim_ilgi_sayi"
+        )
+
+    ilgi_metni = ilgi_normal_uret(muhatap_ifadesi, normal_tarih, normal_sayi)
+    tam_yazi_metni = tam_yazi_metni_uret(milletvekili_bloku, ilgi_metni, SECIM_CEVRESI_GOVDESI)
+
+    st.subheader("4. Üretilen Yazı Metni")
+
+    st.text_area("Yazı Metni", tam_yazi_metni, height=650)
 
     st.download_button(
-        label="Yazı Gövdesini TXT Olarak İndir",
-        data=SECIM_CEVRESI_GOVDESI,
-        file_name="secim_cevresi_duzeltme_govdesi.txt",
+        label="Yazı Metnini TXT Olarak İndir",
+        data=tam_yazi_metni,
+        file_name="secim_cevresi_duzeltme_yazi_metni.txt",
         mime="text/plain"
     )
 
@@ -982,7 +1160,7 @@ if iade_turu == "Seçim Çevresi Düzeltme":
     st.stop()
 
 
-st.subheader("2. Genel Bilgiler")
+st.subheader("4. Genel Bilgiler")
 
 col1, col2 = st.columns(2)
 
@@ -1002,6 +1180,107 @@ with col2:
             "Birden fazla önceki iade sonrası yeniden verilmiş"
         ]
     )
+
+
+st.subheader("5. İlgi Detayları")
+
+if yeniden_iade_turu == "Hayır":
+    ilgi_col1, ilgi_col2 = st.columns(2)
+
+    with ilgi_col1:
+        normal_tarih = st.text_input(
+            "Önerge Tarihi",
+            placeholder="Örn: 05.06.2026",
+            key="normal_ilgi_tarih"
+        )
+
+    with ilgi_col2:
+        normal_sayi = st.text_input(
+            "Önerge Sayısı",
+            placeholder="Örn: 1870000",
+            key="normal_ilgi_sayi"
+        )
+
+    ilgi_metni = ilgi_normal_uret(muhatap_ifadesi, normal_tarih, normal_sayi)
+
+elif yeniden_iade_turu == "Bir önceki iade sonrası yeniden verilmiş":
+    st.caption("İlgi (a), ilgi (b) ve ilgi (c) bilgilerini giriniz.")
+
+    a1, a2 = st.columns(2)
+    with a1:
+        onceki_tarih = st.text_input("İlgi (a) Önceki Önerge Tarihi", placeholder="Örn: 09.02.2026")
+    with a2:
+        onceki_sayi = st.text_input("İlgi (a) Önceki Önerge Sayısı", placeholder="Örn: 1796041")
+
+    b1, b2 = st.columns(2)
+    with b1:
+        yazi_tarih = st.text_input("İlgi (b) Başkanlık Yazısı Tarihi", placeholder="Örn: 25.02.2026")
+    with b2:
+        yazi_sayi = st.text_input("İlgi (b) Başkanlık Yazısı Sayısı", placeholder="Örn: 1806218")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        yeni_tarih = st.text_input("İlgi (c) Yeni Önerge Tarihi", placeholder="Örn: 26.02.2026")
+    with c2:
+        yeni_sayi = st.text_input("İlgi (c) Yeni Önerge Sayısı", placeholder="Örn: 1807542")
+
+    ilgi_metni = ilgi_yeniden_tek_uret(
+        muhatap_ifadesi,
+        onceki_tarih,
+        onceki_sayi,
+        yazi_tarih,
+        yazi_sayi,
+        yeni_tarih,
+        yeni_sayi
+    )
+
+else:
+    st.caption("İlgi (a), ilgi (b), ilgi (c), ilgi (ç) ve ilgi (d) bilgilerini giriniz.")
+
+    a1, a2 = st.columns(2)
+    with a1:
+        ilk_tarih = st.text_input("İlgi (a) İlk Önerge Tarihi", placeholder="Örn: 22.05.2024")
+    with a2:
+        ilk_sayi = st.text_input("İlgi (a) İlk Önerge Sayısı", placeholder="Örn: 1432337")
+
+    b1, b2 = st.columns(2)
+    with b1:
+        ilk_yazi_tarih = st.text_input("İlgi (b) İlk Başkanlık Yazısı Tarihi", placeholder="Örn: 11.06.2024")
+    with b2:
+        ilk_yazi_sayi = st.text_input("İlgi (b) İlk Başkanlık Yazısı Sayısı", placeholder="Örn: 1441884")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        ikinci_tarih = st.text_input("İlgi (c) İkinci Önerge Tarihi", placeholder="Örn: 12.06.2024")
+    with c2:
+        ikinci_sayi = st.text_input("İlgi (c) İkinci Önerge Sayısı", placeholder="Örn: 1443347")
+
+    cc1, cc2 = st.columns(2)
+    with cc1:
+        ikinci_yazi_tarih = st.text_input("İlgi (ç) İkinci Başkanlık Yazısı Tarihi", placeholder="Örn: 03.07.2024")
+    with cc2:
+        ikinci_yazi_sayi = st.text_input("İlgi (ç) İkinci Başkanlık Yazısı Sayısı", placeholder="Örn: 1451796")
+
+    d1, d2 = st.columns(2)
+    with d1:
+        son_tarih = st.text_input("İlgi (d) Son Önerge Tarihi", placeholder="Örn: 17.07.2024")
+    with d2:
+        son_sayi = st.text_input("İlgi (d) Son Önerge Sayısı", placeholder="Örn: 1459944")
+
+    ilgi_metni = ilgi_yeniden_coklu_uret(
+        muhatap_ifadesi,
+        ilk_tarih,
+        ilk_sayi,
+        ilk_yazi_tarih,
+        ilk_yazi_sayi,
+        ikinci_tarih,
+        ikinci_sayi,
+        ikinci_yazi_tarih,
+        ikinci_yazi_sayi,
+        son_tarih,
+        son_sayi
+    )
+
 
 tamami_iade = st.checkbox(
     "Önergenin Tamamı İadeye Konu Edilecek",
@@ -1037,7 +1316,7 @@ if tamami_iade:
         tamami_gerekceler["96"].append(gerekce_secimleri["gerekce_96"])
 
 else:
-    st.subheader("3. İadeye Konu Bölüm Seçimi")
+    st.subheader("6. İadeye Konu Bölüm Seçimi")
 
     bolum_col1, bolum_col2 = st.columns(2)
 
@@ -1048,7 +1327,7 @@ else:
         soru_secili = st.checkbox("Soru Kısmı", value=False, key="bolum_soru_secili")
 
     if giris_secili:
-        st.subheader("4. Giriş Kısmındaki İadeye Konu Yerler")
+        st.subheader("7. Giriş Kısmındaki İadeye Konu Yerler")
 
         c1, c2 = st.columns([1, 1])
 
@@ -1126,7 +1405,7 @@ else:
                     })
 
     if soru_secili:
-        st.subheader("5. Soru Kısmındaki İadeye Konu Yerler")
+        st.subheader("8. Soru Kısmındaki İadeye Konu Yerler")
 
         c1, c2 = st.columns([1, 1])
 
@@ -1230,7 +1509,7 @@ else:
                         "gerekce_96": "Ek belge yasağı",
                     })
 
-with st.expander("6. İsteğe Bağlı Özel Açıklama"):
+with st.expander("9. İsteğe Bağlı Özel Açıklama"):
     st.caption(
         "Bu alan, standart kalıba girmeyen istisnai bir açıklama eklemek için bırakılmıştır. "
         "Boş bırakılırsa metne hiçbir şey eklenmez."
@@ -1265,14 +1544,16 @@ yazi_govdesi = yazi_govdesi_uret(
     yeniden_iade_turu=yeniden_iade_turu
 )
 
-st.subheader("7. Üretilen Yazı Gövdesi")
+tam_yazi_metni = tam_yazi_metni_uret(milletvekili_bloku, ilgi_metni, yazi_govdesi)
 
-st.text_area("Yazı Gövdesi", yazi_govdesi, height=550)
+st.subheader("10. Üretilen Yazı Metni")
+
+st.text_area("Yazı Metni", tam_yazi_metni, height=700)
 
 st.download_button(
-    label="Yazı Gövdesini TXT Olarak İndir",
-    data=yazi_govdesi,
-    file_name="iade_yazisi_govdesi.txt",
+    label="Yazı Metnini TXT Olarak İndir",
+    data=tam_yazi_metni,
+    file_name="iade_yazisi_metni.txt",
     mime="text/plain"
 )
 
