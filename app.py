@@ -443,12 +443,68 @@ def giris_grubu_ifadesi(entries: list) -> str:
 
 
 def soru_grubu_ifadesi(entries: list) -> str:
-    soru_numaralari = sorted(set(int(e["soru_no"]) for e in entries))
+    if not entries:
+        return ""
 
-    if len(soru_numaralari) == 1:
-        return f"{soru_numaralari[0]} numaralı sorusunun"
+    # Eğer bütün seçilenler sorunun tamamıysa daha sade ifade kullan.
+    if all(e.get("cumle") is None for e in entries):
+        soru_numaralari = sorted(set(int(e["soru_no"]) for e in entries))
 
-    return f"{turkce_liste(soru_numaralari)} numaralı sorularının"
+        if len(soru_numaralari) == 1:
+            return f"{soru_numaralari[0]} numaralı sorusunun"
+
+        return f"{turkce_liste(soru_numaralari)} numaralı sorularının"
+
+    # Soru numarasına göre grupla.
+    soru_gruplari = []
+
+    for entry in entries:
+        bulundu = False
+
+        for grup in soru_gruplari:
+            if grup["soru_no"] == entry["soru_no"]:
+                grup["entries"].append(entry)
+                bulundu = True
+                break
+
+        if not bulundu:
+            soru_gruplari.append({
+                "soru_no": entry["soru_no"],
+                "entries": [entry],
+            })
+
+    ifadeler = []
+
+    for index, grup in enumerate(soru_gruplari):
+        soru_no = int(grup["soru_no"])
+        terminal = index == len(soru_gruplari) - 1
+
+        if any(e.get("cumle") is None for e in grup["entries"]):
+            if terminal:
+                ifade = f"{soru_no} numaralı sorusunun"
+            else:
+                ifade = f"{soru_no} numaralı sorusu"
+
+            ifadeler.append(ifade)
+            continue
+
+        cumleler = sorted(set(int(e["cumle"]) for e in grup["entries"]))
+        cumle_sozleri = [sira_sozu(c) for c in cumleler]
+
+        if len(cumleler) == 1:
+            if terminal:
+                ifade = f"{soru_no} numaralı sorusunun {cumle_sozleri[0]} cümlesinin"
+            else:
+                ifade = f"{soru_no} numaralı sorusunun {cumle_sozleri[0]} cümlesi"
+        else:
+            if terminal:
+                ifade = f"{soru_no} numaralı sorusunun {turkce_liste(cumle_sozleri)} cümlelerinin"
+            else:
+                ifade = f"{soru_no} numaralı sorusunun {turkce_liste(cumle_sozleri)} cümleleri"
+
+        ifadeler.append(ifade)
+
+    return turkce_liste(ifadeler, baglac="ile")
 
 
 def ek_belge_grubu_ifadesi(entries: list) -> str:
@@ -524,7 +580,6 @@ def sonuc_nesnesi_uret(entries: list) -> str:
     soru_sayisi = len(set(int(e["soru_no"]) for e in soru_entries))
     ek_belge_sayisi = len(set(int(e["soru_no"]) for e in ek_belge_entries))
 
-    # Ek belge, soru ile birlikteyse sonuç nesnesinde ayrıca "ek belge" demeyip soru üzerinden gider.
     etkili_soru_sayisi = soru_sayisi if soru_sayisi > 0 else 0
 
     if soru_sayisi == 0 and ek_belge_sayisi > 0:
@@ -603,7 +658,6 @@ def ic96_paragrafi_sec(gerekceler: list) -> str:
     if not gerekceler:
         return IC96_PARAGRAFLARI["Kişisel görüş"]
 
-    # En özel haller önce.
     if "Ek belge yasağı" in gerekceler:
         return IC96_PARAGRAFLARI["Ek belge yasağı"]
 
@@ -713,7 +767,7 @@ def esas_iade_paragrafi_uret(
 
     if not entries:
         return (
-            "Henüz sorunlu kısım eklenmedi. Giriş kısmı veya soru kısmı seçilerek en az bir sorunlu yer eklenmelidir."
+            "Henüz iadeye konu kısım eklenmedi. Giriş kısmı veya soru kısmı seçilerek en az bir iadeye konu yer eklenmelidir."
         )
 
     sorunlu_kisim_cumlesi = sorunlu_kisimler_cumlesi_uret(entries)
@@ -793,6 +847,40 @@ def gerekce_secimleri_goster(prefix: str, maddeler: list) -> dict:
 
 
 # =========================================================
+# SESSION STATE
+# =========================================================
+if "giris_ids" not in st.session_state:
+    st.session_state.giris_ids = [1]
+
+if "next_giris_id" not in st.session_state:
+    st.session_state.next_giris_id = 2
+
+if "soru_ids" not in st.session_state:
+    st.session_state.soru_ids = [1]
+
+if "next_soru_id" not in st.session_state:
+    st.session_state.next_soru_id = 2
+
+
+def giris_satiri_ekle():
+    st.session_state.giris_ids.append(st.session_state.next_giris_id)
+    st.session_state.next_giris_id += 1
+
+
+def soru_satiri_ekle():
+    st.session_state.soru_ids.append(st.session_state.next_soru_id)
+    st.session_state.next_soru_id += 1
+
+
+def giris_satiri_sil(row_id: int):
+    st.session_state.giris_ids = [x for x in st.session_state.giris_ids if x != row_id]
+
+
+def soru_satiri_sil(row_id: int):
+    st.session_state.soru_ids = [x for x in st.session_state.soru_ids if x != row_id]
+
+
+# =========================================================
 # ARAYÜZ
 # =========================================================
 st.title("İade Yazısı Gövdesi Üretici")
@@ -802,18 +890,12 @@ st.info(
     "Gerçek önerge PDF'i yüklenmez; EBYS antet, sayı, konu, ilgi, imza ve ek kısımları üretilmez."
 )
 
-if "giris_sayisi" not in st.session_state:
-    st.session_state.giris_sayisi = 1
-
-if "soru_sayisi" not in st.session_state:
-    st.session_state.soru_sayisi = 1
-
 st.subheader("1. İade türü")
 
 iade_turu = st.selectbox(
     "İade türü",
     [
-        "Normal iade",
+        "Olağan İade Usulü",
         "Seçim çevresi düzeltme"
     ]
 )
@@ -837,7 +919,7 @@ if iade_turu == "Seçim çevresi düzeltme":
     st.stop()
 
 
-st.subheader("2. Genel seçimler")
+st.subheader("2. Genel bilgiler")
 
 col1, col2 = st.columns(2)
 
@@ -859,7 +941,7 @@ with col2:
     )
 
 tamami_iade = st.checkbox(
-    "Önergenin tamamı iade edilecek",
+    "Önergenin tamamı iadeye konu edilecek",
     value=False,
     help="Bu seçenek işaretlenirse giriş ve soru kısmı seçimleri kapatılır."
 )
@@ -892,27 +974,41 @@ if tamami_iade:
         tamami_gerekceler["96"].append(gerekce_secimleri["gerekce_96"])
 
 else:
-    sorunlu_bolumler = st.multiselect(
-        "Sorunlu bölüm/bölümler",
-        ["Giriş kısmı", "Soru kısmı"],
-        default=["Giriş kısmı"]
-    )
+    st.subheader("3. İadeye konu bölüm seçimi")
 
-    if "Giriş kısmı" in sorunlu_bolumler:
-        st.subheader("3. Giriş kısmındaki sorunlu yerler")
+    bolum_col1, bolum_col2 = st.columns(2)
+
+    with bolum_col1:
+        giris_secili = st.checkbox("Giriş kısmı", value=True, key="bolum_giris_secili")
+
+    with bolum_col2:
+        soru_secili = st.checkbox("Soru kısmı", value=False, key="bolum_soru_secili")
+
+    if giris_secili:
+        st.subheader("4. Giriş kısmındaki iadeye konu yerler")
 
         c1, c2 = st.columns([1, 1])
 
         with c1:
-            if st.button("➕ Giriş kısmı için yeni sorunlu yer ekle"):
-                st.session_state.giris_sayisi += 1
+            if st.button("➕ Giriş kısmı için yeni iadeye konu yer ekle"):
+                giris_satiri_ekle()
+                st.rerun()
 
         with c2:
             if st.button("Giriş kısmı satırlarını sıfırla"):
-                st.session_state.giris_sayisi = 1
+                st.session_state.giris_ids = [1]
+                st.session_state.next_giris_id = 2
+                st.rerun()
 
-        for i in range(st.session_state.giris_sayisi):
-            with st.expander(f"Giriş kısmı - {i + 1}. sorunlu yer", expanded=True):
+        for row_id in list(st.session_state.giris_ids):
+            with st.expander(f"Giriş kısmı - iadeye konu yer #{row_id}", expanded=True):
+                sil_col, _ = st.columns([1, 5])
+
+                with sil_col:
+                    if st.button("🗑️ Kaldır", key=f"giris_sil_{row_id}"):
+                        giris_satiri_sil(row_id)
+                        st.rerun()
+
                 col_a, col_b, col_c = st.columns(3)
 
                 with col_a:
@@ -922,7 +1018,7 @@ else:
                         max_value=50,
                         value=1,
                         step=1,
-                        key=f"giris_paragraf_{i}"
+                        key=f"giris_paragraf_{row_id}"
                     )
 
                 with col_b:
@@ -930,7 +1026,7 @@ else:
                         "Kapsam",
                         ["Paragrafın tamamı", "Belirli cümle"],
                         horizontal=False,
-                        key=f"giris_cumle_turu_{i}"
+                        key=f"giris_cumle_turu_{row_id}"
                     )
 
                 with col_c:
@@ -941,20 +1037,20 @@ else:
                             max_value=30,
                             value=1,
                             step=1,
-                            key=f"giris_cumle_{i}"
+                            key=f"giris_cumle_{row_id}"
                         )
                     else:
                         cumle = None
 
                 maddeler = st.multiselect(
-                    "Bu sorunlu yer için ilgili hüküm/hükümler",
+                    "Bu iadeye konu yer için ilgili hüküm/hükümler",
                     GIRIS_MADDE_SECENEKLERI,
                     default=["TBMM İçtüzüğü’nün 96’ncı maddesi"],
-                    key=f"giris_maddeler_{i}",
+                    key=f"giris_maddeler_{row_id}",
                     format_func=madde_kisa_adi
                 )
 
-                gerekce_secimleri = gerekce_secimleri_goster(f"giris_{i}", maddeler)
+                gerekce_secimleri = gerekce_secimleri_goster(f"giris_{row_id}", maddeler)
 
                 if maddeler:
                     entries.append({
@@ -966,54 +1062,89 @@ else:
                         "gerekce_96": gerekce_secimleri["gerekce_96"],
                     })
 
-    if "Soru kısmı" in sorunlu_bolumler:
-        st.subheader("4. Soru kısmındaki sorunlu yerler")
+    if soru_secili:
+        st.subheader("5. Soru kısmındaki iadeye konu yerler")
 
         c1, c2 = st.columns([1, 1])
 
         with c1:
-            if st.button("➕ Soru kısmı için yeni sorunlu soru ekle"):
-                st.session_state.soru_sayisi += 1
+            if st.button("➕ Soru kısmı için yeni iadeye konu yer ekle"):
+                soru_satiri_ekle()
+                st.rerun()
 
         with c2:
             if st.button("Soru kısmı satırlarını sıfırla"):
-                st.session_state.soru_sayisi = 1
+                st.session_state.soru_ids = [1]
+                st.session_state.next_soru_id = 2
+                st.rerun()
 
-        for i in range(st.session_state.soru_sayisi):
-            with st.expander(f"Soru kısmı - {i + 1}. sorunlu soru", expanded=True):
-                soru_no = st.number_input(
-                    "Soru numarası",
-                    min_value=1,
-                    max_value=100,
-                    value=1,
-                    step=1,
-                    key=f"soru_no_{i}"
-                )
+        for row_id in list(st.session_state.soru_ids):
+            with st.expander(f"Soru kısmı - iadeye konu yer #{row_id}", expanded=True):
+                sil_col, _ = st.columns([1, 5])
+
+                with sil_col:
+                    if st.button("🗑️ Kaldır", key=f"soru_sil_{row_id}"):
+                        soru_satiri_sil(row_id)
+                        st.rerun()
+
+                col_a, col_b, col_c = st.columns(3)
+
+                with col_a:
+                    soru_no = st.number_input(
+                        "Soru numarası",
+                        min_value=1,
+                        max_value=100,
+                        value=1,
+                        step=1,
+                        key=f"soru_no_{row_id}"
+                    )
+
+                with col_b:
+                    soru_kapsam = st.radio(
+                        "Kapsam",
+                        ["Sorunun tamamı", "Belirli cümle"],
+                        horizontal=False,
+                        key=f"soru_kapsam_{row_id}"
+                    )
+
+                with col_c:
+                    if soru_kapsam == "Belirli cümle":
+                        soru_cumle = st.number_input(
+                            "Cümle numarası",
+                            min_value=1,
+                            max_value=30,
+                            value=1,
+                            step=1,
+                            key=f"soru_cumle_{row_id}"
+                        )
+                    else:
+                        soru_cumle = None
 
                 soru_metni_iadeye_konu = st.checkbox(
-                    "Bu sorunun metni iadeye konu",
+                    "Bu soru metni iadeye konu edilecek",
                     value=True,
-                    key=f"soru_metni_iade_{i}"
+                    key=f"soru_metni_iade_{row_id}"
                 )
 
                 if soru_metni_iadeye_konu:
                     maddeler = st.multiselect(
-                        "Bu soru için ilgili hüküm/hükümler",
+                        "Bu iadeye konu soru/kısım için ilgili hüküm/hükümler",
                         SORU_MADDE_SECENEKLERI,
                         default=[
                             "TBMM İçtüzüğü’nün 96’ncı maddesi",
                             "TBMM İçtüzüğü’nün 97’nci maddesi"
                         ],
-                        key=f"soru_maddeler_{i}",
+                        key=f"soru_maddeler_{row_id}",
                         format_func=madde_kisa_adi
                     )
 
-                    gerekce_secimleri = gerekce_secimleri_goster(f"soru_{i}", maddeler)
+                    gerekce_secimleri = gerekce_secimleri_goster(f"soru_{row_id}", maddeler)
 
                     if maddeler:
                         entries.append({
                             "tip": "soru",
                             "soru_no": int(soru_no),
+                            "cumle": int(soru_cumle) if soru_cumle is not None else None,
                             "maddeler": maddeler,
                             "gerekce_67": gerekce_secimleri["gerekce_67"],
                             "gerekce_96": gerekce_secimleri["gerekce_96"],
@@ -1022,7 +1153,7 @@ else:
                 ek_belge_var = st.checkbox(
                     "Bu soruya ek belge eklenmiş",
                     value=False,
-                    key=f"ek_belge_{i}"
+                    key=f"ek_belge_{row_id}"
                 )
 
                 if ek_belge_var:
@@ -1036,13 +1167,17 @@ else:
                         "gerekce_96": "Ek belge yasağı",
                     })
 
-st.subheader("5. Ek açıklama")
+with st.expander("6. İsteğe bağlı özel açıklama"):
+    st.caption(
+        "Bu alan, standart kalıba girmeyen istisnai bir açıklama eklemek için bırakılmıştır. "
+        "Boş bırakılırsa metne hiçbir şey eklenmez."
+    )
 
-ek_aciklama = st.text_area(
-    "Ek açıklama cümlesi, isteğe bağlı",
-    height=80,
-    placeholder="Gerekirse esas iade değerlendirme paragrafına ilave edilecek açıklamayı yazabilirsiniz. Boş bırakılabilir."
-)
+    ek_aciklama = st.text_area(
+        "Özel açıklama cümlesi",
+        height=80,
+        placeholder="Gerekirse esas iade değerlendirme paragrafına ilave edilecek açıklamayı yazabilirsiniz. Boş bırakılabilir."
+    )
 
 if tamami_iade:
     kullanilan_maddeler = maddeleri_sirala(tamami_maddeler)
@@ -1067,7 +1202,7 @@ yazi_govdesi = yazi_govdesi_uret(
     yeniden_iade_turu=yeniden_iade_turu
 )
 
-st.subheader("6. Üretilen Yazı Gövdesi")
+st.subheader("7. Üretilen Yazı Gövdesi")
 
 st.text_area("Yazı gövdesi", yazi_govdesi, height=550)
 
